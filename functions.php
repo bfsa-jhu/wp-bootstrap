@@ -8,7 +8,7 @@ function wpbootstrap_scripts_with_jquery()
 	wp_enqueue_script( 'custom-script' );
 }
 add_action( 'wp_enqueue_scripts', 'wpbootstrap_scripts_with_jquery' );
-
+register_nav_menu( 'primary', __( 'Primary Menu', 'wp-bootstrap' ) );
 
 	class BS3_Walker_Nav_Menu extends Walker_Nav_Menu {
 
@@ -97,4 +97,54 @@ function new_excerpt_more($more) {
 return '<p><a href="'. get_permalink($post->ID) . '" class="btn btn-info">' . 'Continue Reading' . '</a></p>';
 }
 add_filter('excerpt_more', 'new_excerpt_more');
+add_image_size('thumb-194-194', 194, 194, array( center, top ));
+/*function featured_image_requirement() {
+     if(!has_post_thumbnail()) {
+          wp_die( 'You forgot to set the featured image. please make the size 194px x 194px Click the back button on your browser and set it.' ); 
+     } 
+}
+add_action( 'pre_post_update', 'featured_image_requirement' );*/
+add_filter('wp_handle_upload_prefilter','tc_handle_upload_prefilter');
+function tc_handle_upload_prefilter($file)
+{
+
+    $img=getimagesize($file['tmp_name']);
+    $minimum = array('width' => '194', 'height' => '194');
+    $width= $img[0];
+    $height =$img[1];
+
+    if ($width < $minimum['width'] )
+        return array("error"=>"Image dimensions are too small. Minimum width is {$minimum['width']}px. Uploaded image width is $width px");
+
+    elseif ($height <  $minimum['height'])
+        return array("error"=>"Image dimensions are too small. Minimum height is {$minimum['height']}px. Uploaded image height is $height px");
+    else
+        return $file; 
+}
+add_action('save_post', 'wpds_check_thumbnail');
+add_action('admin_notices', 'wpds_thumbnail_error');
+function wpds_check_thumbnail($post_id) {
+    // change to any custom post type
+    if(get_post_type($post_id) != 'exhibit')
+        return;
+    if ( !has_post_thumbnail( $post_id ) ) {
+        // set a transient to show the users an admin message
+        set_transient( "has_post_thumbnail", "no" );
+        // unhook this function so it doesn't loop infinitely
+        remove_action('save_post', 'wpds_check_thumbnail');
+        // update the post set it to draft
+        wp_update_post(array('ID' => $post_id, 'post_status' => 'draft'));
+        add_action('save_post', 'wpds_check_thumbnail');
+    } else {
+        delete_transient( "has_post_thumbnail" );
+    }
+}
+function wpds_thumbnail_error()
+{
+    // check if the transient is set, and display the error message
+    if ( get_transient( "has_post_thumbnail" ) == "no" ) {
+        echo "<div id='message' class='error'><p><strong>You must select Featured Image, your Exhibit is saved but it can not be published. Please make the size 194px x 194px.</strong></p></div>";
+        delete_transient( "has_post_thumbnail" );
+    }
+}
 ?>
