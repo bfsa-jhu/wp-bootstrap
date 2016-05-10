@@ -29,7 +29,12 @@ $wp_query->query('post_type=exhibit' . '&paged=' . $paged . '&posts_per_page=18&
 					<ul class="exhibit_person">
     <li>
         <figure>
-          <?php the_post_thumbnail('full', array( 'alt' => get_the_title())); ?>
+          <?php if ( has_post_thumbnail() ) {
+    the_post_thumbnail('thumb-194-194', array( 'alt' => get_the_title()));
+}
+else {
+    echo '<img src="http://bfsa.jhu.edu/wp-content/uploads/2016/03/placeholder_m.jpg" />';
+} ?>
             <figcaption>
                 <h2><?php the_title(); ?></h2>
                 <p><?php the_field('job_title')?></p>
@@ -41,7 +46,18 @@ $wp_query->query('post_type=exhibit' . '&paged=' . $paged . '&posts_per_page=18&
 <div id="openModal-<?php echo $i;?>" class="modalDialog">
 	<div>
 		<a href="#close" title="Close" class="close">X</a>
-		  <?php the_post_thumbnail('thumbnail', array( 'alt' => get_the_title())); ?><h2><?php the_title(); ?></h2>
+		  <?php  ?>
+		  <?php
+if ( has_post_thumbnail() ) {
+    the_post_thumbnail('thumb-194-194', array( 'alt' => get_the_title()));
+}
+else {
+    echo '<img src="http://bfsa.jhu.edu/wp-content/uploads/2016/03/placeholder_m.jpg" />';
+}
+?>
+		  
+		  
+		  <h2><?php the_title(); ?></h2>
 		<p><strong><?php the_field('job_title')?></strong></p>
 		<?php the_field('biography')?>
 	</div>
@@ -71,7 +87,9 @@ article[id*="post-"] {
   
     padding: 0!important;
 }
-.exhibit .pagination{ padding:1em;}
+.exhibit .pagination{ padding:1em;
+ clear: both;
+    float: left;}
 .pagination .next_posts{float:right; margin-right: 12em; }
 .pagination .previous_posts{float:left;}
 ul.exhibit_person li{list-style:none;}
