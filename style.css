@@ -19,6 +19,7 @@ body {
 	padding-bottom: 40px;*/
 }
 h1,h2,h3,h4,h5,h6{font-weight:bold;}
+.jumbotron h1{text-align:center;}
 .container img{max-width:100%;height:auto;}
 img.alignright, .alignright img {float:right; margin:0 0 1em 1em}
 img.alignleft {float:left; margin:0 1em 1em 0}
@@ -138,7 +139,7 @@ a{color:#ae8359!important;}
 .soliloquy-theme-classic .soliloquy-prev{visibility:hidden;}
 
 		}
-    
+		.soliloquy-container, .soliloquy-container { margin: 0 auto !important; }
 /*breadcrumbs */
 .breadcrumbs{
 
