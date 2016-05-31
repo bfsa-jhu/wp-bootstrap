@@ -64,7 +64,7 @@ color: black }
     margin: 0;
     padding: 0 4px 5px;
 }
-a{color:#ae8359!important;}
+li.trail-item a, .jumbotron a{color:#ae8359!important;}
 /* **************************Navbar********************************************* */
 @media (max-width: 767px) {
 
@@ -173,4 +173,6 @@ color:#333!important;}
      color: #fff!important;
 }
 h2.blog-post-title{margin-top:0!important;}
-
+/*calendar*/
+.timely a, .timely a:link, .timely a:visited, .timely a:active, .timely a:hover, #ai1ec-container a, #ai1ec-container a:link, #ai1ec-container a:visited, #ai1ec-container a:active, #ai1ec-container a:hover{color: inherit!important;}
+p.meta{display:none!important;}
