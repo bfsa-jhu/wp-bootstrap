@@ -85,66 +85,211 @@ function the_breadcrumb() {
 	elseif (is_search()) {echo"<li>Search Results"; echo'</li>';}
 	echo '</ol>';
 }
-$args = array(
-	'flex-width'    => true,
-	'width'         => 212,
-	'flex-height'    => true,
-	'height'        => 40,
-	'default-image' => get_template_directory_uri() . '/images/header.jpg',
-);
-add_theme_support( 'custom-header', $args );
+
 function new_excerpt_more($more) {
 return '<p><a href="'. get_permalink($post->ID) . '" class="btn btn-info">' . 'Continue Reading' . '</a></p>';
 }
 add_filter('excerpt_more', 'new_excerpt_more');
+
 add_image_size('thumb-194-194', 194, 194, array( center, top ));
-/*function featured_image_requirement() {
-     if(!has_post_thumbnail()) {
-          wp_die( 'You forgot to set the featured image. please make the size 194px x 194px Click the back button on your browser and set it.' ); 
-     } 
-}
-add_action( 'pre_post_update', 'featured_image_requirement' );*/
-add_filter('wp_handle_upload_prefilter','tc_handle_upload_prefilter');
-function tc_handle_upload_prefilter($file)
+
+add_action( 'wp_before_admin_bar_render', 'wpse200296_before_admin_bar_render' ); 
+
+function wpse200296_before_admin_bar_render()
 {
+    global $wp_admin_bar;
 
-    $img=getimagesize($file['tmp_name']);
-    $minimum = array('width' => '194', 'height' => '194');
-    $width= $img[0];
-    $height =$img[1];
-
-    if ($width < $minimum['width'] )
-        return array("error"=>"Image dimensions are too small. Minimum width is {$minimum['width']}px. Uploaded image width is $width px");
-
-    elseif ($height <  $minimum['height'])
-        return array("error"=>"Image dimensions are too small. Minimum height is {$minimum['height']}px. Uploaded image height is $height px");
-    else
-        return $file; 
+    $wp_admin_bar->remove_menu('customize');
 }
-add_action('save_post', 'wpds_check_thumbnail');
-add_action('admin_notices', 'wpds_thumbnail_error');
-function wpds_check_thumbnail($post_id) {
-    // change to any custom post type
-    if(get_post_type($post_id) != 'exhibit')
-        return;
-    if ( !has_post_thumbnail( $post_id ) ) {
-        // set a transient to show the users an admin message
-        set_transient( "has_post_thumbnail", "no" );
-        // unhook this function so it doesn't loop infinitely
-        remove_action('save_post', 'wpds_check_thumbnail');
-        // update the post set it to draft
-        wp_update_post(array('ID' => $post_id, 'post_status' => 'draft'));
-        add_action('save_post', 'wpds_check_thumbnail');
-    } else {
-        delete_transient( "has_post_thumbnail" );
+function color_customizer_css() {
+    ?>
+    <style type="text/css">
+	header,.navbar-default,.navbar-nav > li > .dropdown-menu, footer.footer {background-color:<?php the_field('background_color', 'option'); ?>!important;}
+       .navbar-default .navbar-nav > li :hover{
+background-color:<?php the_field('hover_color', 'option'); ?>!important;}
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{background-color:<?php the_field('hover_color', 'option'); ?>!important;
+font-weight:bold;}
+    </style>
+    <?php
+}
+add_action( 'wp_head', 'color_customizer_css' );
+
+/*create ACF options page*/
+
+
+if( function_exists('acf_add_options_page') ) {
+	
+	acf_add_options_page(array(
+		'page_title' 	=> 'Theme General Settings',
+		'menu_title'	=> 'Theme Settings',
+		'menu_slug' 	=> 'theme-general-settings',
+		'capability'	=> 'edit_posts',
+		'redirect'		=> false
+	));
+	
+	acf_add_options_sub_page(array(
+		'page_title' 	=> 'Header Settings',
+		'menu_title'	=> 'Header',
+		'parent_slug'	=> 'theme-general-settings',
+	));
+	
+	acf_add_options_sub_page(array(
+		'page_title' 	=> 'Footer Settings',
+		'menu_title'	=> 'Footer',
+		'parent_slug'	=> 'theme-general-settings',
+	));
+	
+}
+
+
+
+
+/*add the pagination with numbers to use put this in template custom_pagination()*/
+function custom_pagination() {
+    global $wp_query;
+    $big = 999999999;
+    $pages = paginate_links(array(
+        'base' => str_replace($big, '%#%', get_pagenum_link($big)),
+        'format' => '?page=%#%',
+        'current' => max(1, get_query_var('paged')),
+        'total' => $wp_query->max_num_pages,
+        'prev_next' => false,
+        'type' => 'array',
+        'prev_next' => TRUE,
+        'prev_text' => 'Previous',
+        'next_text' => 'Next',
+            ));
+    if (is_array($pages)) {
+        $current_page = ( get_query_var('paged') == 0 ) ? 1 : get_query_var('paged');
+        echo '<ul class="pagination">';
+        foreach ($pages as $i => $page) {
+            if ($current_page == 1 && $i == 0) {
+                echo "<li class='active'>$page</li>";
+            } else {
+                if ($current_page != 1 && $current_page == $i) {
+                    echo "<li class='active'>$page</li>";
+                } else {
+                    echo "<li>$page</li>";
+                }
+            }
+        }
+        echo '</ul>';
     }
 }
-function wpds_thumbnail_error()
-{
-    // check if the transient is set, and display the error message
-    if ( get_transient( "has_post_thumbnail" ) == "no" ) {
-        echo "<div id='message' class='error'><p><strong>You must select Featured Image, your Exhibit is saved but it can not be published. Please make the size 194px x 194px.</strong></p></div>";
-        delete_transient( "has_post_thumbnail" );
-    }
+ 
+ 
+ /*exact search */
+/*add_filter('posts_search', 'my_search_is_exact', 20, 2);
+function my_search_is_exact($search, $wp_query){
+
+    global $wpdb;
+
+    if(empty($search))
+        return $search;
+
+    $q = $wp_query->query_vars;
+    $n = !empty($q['exact']) ? '' : '%';
+
+    $search = $searchand = '';
+
+    foreach((array)$q['search_terms'] as $term) :
+
+        $term = esc_sql(like_escape($term));
+
+        $search.= "{$searchand}($wpdb->posts.post_title REGEXP '[[:<:]]{$term}[[:>:]]') OR ($wpdb->posts.post_content REGEXP '[[:<:]]{$term}[[:>:]]')";
+
+        $searchand = ' AND ';
+
+    endforeach;
+
+    if(!empty($search)) :
+        $search = " AND ({$search}) ";
+        if(!is_user_logged_in())
+            $search .= " AND ($wpdb->posts.post_password = '') ";
+    endif;
+
+    return $search;
+
 }
+ */
+ /**
+ * [list_searcheable_acf list all the custom fields we want to include in our search query]
+ * @return [array] [list of custom fields]
+ */
+function list_searcheable_acf(){
+  $list_searcheable_acf = array("job_title", "biography");
+  return $list_searcheable_acf;
+}
+/**
+ * [advanced_custom_search search that encompasses ACF/advanced custom fields and taxonomies and split expression before request]
+ * @param  [query-part/string]      $where    [the initial "where" part of the search query]
+ * @param  [object]                 $wp_query []
+ * @return [query-part/string]      $where    [the "where" part of the search query as we customized]
+ * see https://vzurczak.wordpress.com/2013/06/15/extend-the-default-wordpress-search/
+ * credits to Vincent Zurczak for the base query structure/spliting tags section
+ */
+function advanced_custom_search( $where, &$wp_query ) {
+    global $wpdb;
+
+    if ( empty( $where ))
+        return $where;
+
+    // get search expression
+    $terms = $wp_query->query_vars[ 's' ];
+
+    // explode search expression to get search terms
+    $exploded = explode( ' ', $terms );
+    if( $exploded === FALSE || count( $exploded ) == 0 )
+        $exploded = array( 0 => $terms );
+
+    // reset search in order to rebuilt it as we whish
+    $where = '';
+
+    // get searcheable_acf, a list of advanced custom fields you want to search content in
+    $list_searcheable_acf = list_searcheable_acf();
+    foreach( $exploded as $tag ) :
+        $where .= " 
+          AND (
+            (wp_posts.post_title LIKE '%$tag%')
+            OR (wp_posts.post_content LIKE '%$tag%')
+            OR EXISTS (
+              SELECT * FROM wp_postmeta
+                  WHERE post_id = wp_posts.ID
+                    AND (";
+        foreach ($list_searcheable_acf as $searcheable_acf) :
+          if ($searcheable_acf == $list_searcheable_acf[0]):
+            $where .= " (meta_key LIKE '%" . $searcheable_acf . "%' AND meta_value LIKE '%$tag%') ";
+          else :
+            $where .= " OR (meta_key LIKE '%" . $searcheable_acf . "%' AND meta_value LIKE '%$tag%') ";
+          endif;
+        endforeach;
+            $where .= ")
+            )
+            OR EXISTS (
+              SELECT * FROM wp_comments
+              WHERE comment_post_ID = wp_posts.ID
+                AND comment_content LIKE '%$tag%'
+            )
+            OR EXISTS (
+              SELECT * FROM wp_terms
+              INNER JOIN wp_term_taxonomy
+                ON wp_term_taxonomy.term_id = wp_terms.term_id
+              INNER JOIN wp_term_relationships
+                ON wp_term_relationships.term_taxonomy_id = wp_term_taxonomy.term_taxonomy_id
+              WHERE (
+                taxonomy = 'post_tag'
+                    OR taxonomy = 'category'                
+                    OR taxonomy = 'myCustomTax'
+                )
+                AND object_id = wp_posts.ID
+                AND wp_terms.name LIKE '%$tag%'
+            )
+        )";
+    endforeach;
+    return $where;
+}
+
+add_filter( 'posts_search', 'advanced_custom_search', 500, 2 );
+ 
+ 
 ?>
