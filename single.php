@@ -8,7 +8,7 @@
 					
 					<article id="post-<?php the_ID(); ?>" <?php post_class('clearfix'); ?> role="article" >
 						
-						<header>
+						<header class="post_header">
 						
 							<?php the_post_thumbnail('full', array('class' => 'img-rounded center-block')); ?>
 							
