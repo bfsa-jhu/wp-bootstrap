@@ -18,8 +18,9 @@ body {
 	/*padding-top: 60px;
 	padding-bottom: 40px;*/
 }
+body > .container{padding:0!important;}
 h1,h2,h3,h4,h5,h6{font-weight:bold;}
-.jumbotron h1{text-align:center;}
+h1{text-align:center;}
 .container img{max-width:100%;height:auto;}
 img.alignright, .alignright img {float:right; margin:0 0 1em 1em}
 img.alignleft {float:left; margin:0 1em 1em 0}
@@ -65,18 +66,93 @@ color: black }
     padding: 0 4px 5px;
 }
 li.trail-item a, .jumbotron a{color:#ae8359!important;}
-/* **************************Navbar********************************************* */
-@media (max-width: 767px) {
 
+
+/* **************************Navbar********************************************* */
+header{margin: 0 -20px;
+padding:0 20px;}
+.topnav{
+width:99%;
+height:3rem; 
+right:0;
+margin-bottom:1.5rem;
+ } 
+.topnav .nav > li > a {background-color:#337ab7;
+color:#000000;}
+.topnav .nav > li > a:hover{border:none;color:#000000;background-color:#ffffff;}
+.hsalogo{
+	 
+	}
+.hsalogo img{
+	max-width: 100%;
+  height: auto;
+  }
+
+nav.navbar-default{border:none;}
+
+
+nav.navbar-default .container {font-weight:bold;}
+
+nav.navbar-default #navbar ul{padding-top:0;}
+.container > .navbar-header, .container-fluid > .navbar-header, .container > .navbar-collapse, .container-fluid > .navbar-collapse{margin-left:0;margin-right:0;}
+
+footer.footer{
+    position: absolute;
+    bottom: -30rem;
+    width: 100%;
+    height: 30rem/* Example value */
 	
-	.navbar {
-       padding-left:5rem;
-   
 }
-}.navbar {
+footer.footer .container .footer-identification,footer.footer .container .footer-menu{padding-top:1rem;}
+footer.footer .container p{color:#ffffff;
+}
+footer.footer .container p.copy{margin:20px 0;}
+
+.navbar {
        margin-bottom: 0;
    
 }
+/*navigation*/
+.navbar-brand{padding:0rem!important;}
+
+
+.navbar-default .navbar-nav > li > a {
+    color: #fff!important;
+}
+.navbar-default .navbar-nav > li :hover,.navbar-default .navbar-nav .open .dropdown-menu > li > a:hover{
+
+color:#333!important;}
+.navbar-default .navbar-nav .open .dropdown-menu > li > a {
+    color: #ffffff !important;
+}
+
+
+.dropdown-menu > li > a{color:#ffffff!important;}
+.dropdown-menu > li > a:hover{color:#333!important;}
+form.search-form button.btn{padding: 9px 12px;}
+/*.search-container{
+	margin:0 auto;
+	width:55%;
+	
+}
+.search-container input.span2, textarea.span2, .uneditable-input.span2 {
+    margin-right: 0.5rem;
+    padding-bottom: 9px;
+    width: 87rem;
+}
+.search-container .navbar-search .search-query {
+ -webkit-border-radius: 15px;
+-moz-border-radius: 15px;
+border-radius: 15px;
+ font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 1;
+    margin-bottom: 0;
+    padding: 4px 14px;
+}
+*/
+
 /* **************************Carousel********************************************* */
 
 @media (min-width: 767px) {
@@ -115,7 +191,7 @@ li.trail-item a, .jumbotron a{color:#ae8359!important;}
 }
 
 /*bootstrap*/
-.jumbotron p{font-size:14px!important;}
+p{font-size:14px!important;}
 .gap-right {
   margin-right: 10px; 
 }
@@ -152,17 +228,8 @@ width:96%;}
 .trail-items li::after {
 	content: ">>"!important;
 }
-/*navigation*/
-.navbar-brand{padding:.5rem!important;}
-.navbar-default{background-color:#ae8359!important;}
 
-.navbar-default .navbar-nav > li > a {
-    color: #fff!important;
-}
-.navbar-default .navbar-nav > li :hover{
-background-color:#e7e7e7!important;
-color:#333!important;}
-.dropdown-menu > li > a{color:#333!important;}
+
 /*admlin bar */
 #wpadminbar{position:fixed!important;}
 #wpadminbar .ab-empty-item, #wpadminbar a.ab-item, #wpadminbar > #wp-toolbar span.ab-label, #wpadminbar > #wp-toolbar span.noticon {
@@ -176,3 +243,7 @@ h2.blog-post-title{margin-top:0!important;}
 /*calendar*/
 .timely a, .timely a:link, .timely a:visited, .timely a:active, .timely a:hover, #ai1ec-container a, #ai1ec-container a:link, #ai1ec-container a:visited, #ai1ec-container a:active, #ai1ec-container a:hover{color: inherit!important;}
 p.meta{display:none!important;}
+.poasterboard-calendar .ai1ec-calendar-toolbar, .poasterboard-calendar .ai1ec-views-dropdown{display:none;}
+
+/*exhibit page*/
+header.post_header{background-color:#fff!important;}
