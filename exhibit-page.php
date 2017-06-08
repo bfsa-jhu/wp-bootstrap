@@ -8,7 +8,22 @@
   <div>
 
 		<?php echo '<h1 class="entry-title">'.get_the_title().'</h1>';?>
-			
+		
+  <?php echo do_shortcode( '[searchandfilter fields="search,occupation_category,decade_tag" post_types="exhibit" headings=",Occupations,Decades" order_by="name" order_dir="ASC" empty_search_url="http://bfsa.jhu.edu/exhibits/exhibit-list/"]' ); ?>
+			<?php /* ?><form class="search-form" role="search" method="get" action="<?php bloginfo('url'); ?>">
+		<div class="form-group">
+			<div class="input-group input-group-lg">
+				<input class="search-field form-control" id="main-search" placeholder="Search" value="" name="s" type="search">
+				<input type="hidden" name="post_type" value="exhibit" />
+				   <input name="site_section" type="hidden" value="exhibit" />
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="submit">
+							Search
+						</button>
+					</span>
+			</div>
+		</div>
+	</form><?php */ ?>
 			<?php 
 			$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
 
@@ -29,8 +44,11 @@ $wp_query->query('post_type=exhibit' . '&paged=' . $paged . '&posts_per_page=18&
 					<ul class="exhibit_person">
     <li>
         <figure>
-          <?php if ( has_post_thumbnail() ) {
-    the_post_thumbnail('thumb-194-194', array( 'alt' => get_the_title()));
+          <?php 
+		  $bio_image = get_field('bio_image');
+$thumb_size = 'thumb-194-194'; // (thumbnail, medium, large, full or custom size)
+		  if ( $bio_image ) {
+   echo wp_get_attachment_image( $bio_image, $thumb_size );
 }
 else {
     echo '<img src="http://bfsa.jhu.edu/wp-content/uploads/2016/03/placeholder_m.jpg" />';
@@ -48,8 +66,9 @@ else {
 		<a href="#close" title="Close" class="close">X</a>
 		  <?php  ?>
 		  <?php
-if ( has_post_thumbnail() ) {
-    the_post_thumbnail('thumb-194-194', array( 'alt' => get_the_title()));
+		  
+	  if ( $bio_image ) {
+   echo wp_get_attachment_image( $bio_image, $thumb_size );
 }
 else {
     echo '<img src="http://bfsa.jhu.edu/wp-content/uploads/2016/03/placeholder_m.jpg" />';
@@ -59,6 +78,8 @@ else {
 		  
 		  <h2><?php the_title(); ?></h2>
 		<p><strong><?php the_field('job_title')?></strong></p>
+		<?php if( get_field('media_link') ): ?><p><a href="<?php the_field('media_link')?>" class="btn btn-primarybtn btn-primary" role="button">In the Media</a></p><?php endif; ?>
+		
 		<?php the_field('biography')?>
 	</div>
 </div>
@@ -71,11 +92,8 @@ else {
 						<?php endwhile;endif; ?>
 
 						  <!-- pagination -->
-        <ul class="pagination">
-             <li class="previous_posts"><?php echo get_previous_posts_link( 'Previous Page' ); ?></li>
-             <li class="next_posts"><?php echo get_next_posts_link( 'Next Page' ); ?></li>
-            
-        </ul>
+        		 <?php custom_pagination(); ?>
+		
 						<?php wp_reset_postdata(); ?>
 					
 					</div><!-- .exhibit -->
