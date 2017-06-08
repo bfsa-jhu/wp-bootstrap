@@ -7,10 +7,18 @@
 					<?php if (have_posts()) : while (have_posts()) : the_post(); ?>
 					
 					
-					<div class="jumbotron" id="post-<?php the_ID(); ?>" <?php post_class('clearfix'); ?> role="article">	
-						<header>
+					<div  id="post-<?php the_ID(); ?>" <?php post_class('clearfix'); ?> role="article">	
+						<header class="post_header">
 						
-							<?php the_post_thumbnail('thumb-194-194', array( 'alt' => get_the_title())); ?>
+							        <?php 
+		  $bio_image = get_field('bio_image');
+$thumb_size = 'full'; // (thumbnail, medium, large, full or custom size)
+		  if ( $bio_image ) {
+   echo wp_get_attachment_image( $bio_image, $thumb_size );
+}
+else {
+    echo '<img src="http://bfsa.jhu.edu/wp-content/uploads/2016/03/placeholder_m.jpg" />';
+} ?>
 							
 							<div class="page-header"><h1 class="single-title" itemprop="headline"><?php the_title(); ?></h1></div>
 							
@@ -20,7 +28,9 @@
 					 
 					 
 						<section class="post_content" itemprop="articleBody">
-						<h2><?php the_field('job_title')?></h2>	
+						<h2><?php the_field('job_title')?></h2>
+<?php if( get_field('media_link') ): ?><p><a href="<?php the_field('media_link')?>" class="btn btn-primarybtn btn-primary" role="button">In the Media</a></p><?php endif; ?>
+								
 							<?php the_field('biography')?>
 							<?php wp_link_pages(); ?>
 					
