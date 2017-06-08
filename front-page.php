@@ -1,7 +1,7 @@
 <?php get_header(); ?>
 
 
-<div class="container">
+
 
 <div class="row">
 
@@ -13,7 +13,7 @@
 if ( have_posts() ) {
 	while ( have_posts() ) {
 		the_post(); ?>
-		<div class="jumbotron">
+		<div>
   <h1><?php the_title(); ?></h1>
 <?php the_content(); ?>
 </div>
@@ -24,7 +24,16 @@ if ( have_posts() ) {
 	} // end while
 } // end if
 ?>
-<h2>Featured Exhibit additions</h2>
+<h2 class="text-center">Featured Events</h2>
+<div class="poasterboard-calendar" >
+<?php echo do_shortcode( '[ai1ec view="posterboard" events_limit="3"]' ); ?>
+ <p class="pull-right">
+    <a class="btn btn-primary btn-large" href="/events/">
+      View all Events
+    </a></p>
+</div>
+<div class="clearfix"></div>
+<h2 class="text-center">Featured Exhibit additions</h2>
 <?php
 
 // The Query
@@ -36,7 +45,15 @@ if ( $the_query->have_posts() ) {
 	while ( $the_query->have_posts() ) {
 		$the_query->the_post();
 		echo '<div class="col-sm-6 col-md-4"><div class="thumbnail">';
-		the_post_thumbnail( 'full', array( 'class' => "img-circle",'title' => trim( strip_tags( $attachment->post_title ) ) ) ); 
+		   $bio_image = get_field('bio_image');
+$thumb_size = 'thumb-194-194'; // (thumbnail, medium, large, full or custom size)
+		  if ( $bio_image ) {
+   echo wp_get_attachment_image( $bio_image, $thumb_size,"", array( "class" => "img-circle" ) );
+}
+else {
+    echo '<img src="http://bfsa.jhu.edu/wp-content/uploads/2016/03/placeholder_m.jpg" class="img-circle" />';
+} 
+		
 		echo '<div class="caption">';
 echo '<h3>'.get_the_title().'</h3>';
 	echo '<p>'.the_field('job_title').'</p>';
@@ -54,5 +71,5 @@ echo '</div></div></div>';
 /* Restore original Post Data */
 wp_reset_postdata();?>
 </div>
-</div>
+
 <?php get_footer(); ?>
